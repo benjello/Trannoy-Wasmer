@@ -28,7 +28,7 @@ def case_study(year = 2013):
 def case_study2(year=2013):
     simulation = ScenarioSimulation()  #on instancie on prends une instance de ScenarioSimulation, on prends un exemple de cette classe là
     simulation.set_config(year = year, 
-                    nmen = 4, #nombre de ménages
+                    nmen = 8, #nombre de ménages
                     maxrev = 10000, 
                     x_axis = 'sali')#salaire imposable (une seule personne dans le ménage)
     #print simulation.scenario
@@ -40,9 +40,15 @@ def case_study2(year=2013):
     df = simulation.get_results_dataframe(index_by_code=True) #renvoie la dataframe avec tout calculé
     
  
-    #print df.to_string()
+    print df.to_string()
     #print df.transpose()['logt']
-    print df.loc['logt']
+    
+    a = df.loc['sal'] 
+    print a
+    
+    #print df.loc['logt']
+    
+    
     #print simulation.output_table.table.to_string()
     
 if __name__== '__main__' :
