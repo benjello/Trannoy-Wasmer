@@ -23,6 +23,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 import os
 import datetime
@@ -37,13 +40,14 @@ from openfisca_core.simulations import ScenarioSimulation
 # fname_all = "aggregates_inflated_loyers.xlsx"
 # fname_all = os.path.join(destination_dir, fname_all)
 
-def test_case(year, save = False):
+def test_case(year):
 
     country = 'france'
-    salaires_nets = 40000
-    nmen = 6 #nombre de ménages que je fait varier
+    salaires_nets = 50000
+    nmen = 100 #nombre de ménages que je fait varier
 
     for reforme in [False, True]: #fais tourner un fois pour faux et une fois pour vrai
+        #print reforme
         simulation = ScenarioSimulation()
         simulation.set_config(year = year,
                               reforme = reforme,
@@ -64,57 +68,113 @@ def test_case(year, save = False):
         simulation.P.ir.autre.charge_loyer.active = 1  #simulation.p est un attribu de simulation
         simulation.P.ir.autre.charge_loyer.plaf = 1000
         simulation.P.ir.autre.charge_loyer.plaf_nbp = 0
-        print simulation.P #montre ce qui est écrit dans param.xml
+        #print simulation.P #montre ce qui est écrit dans param.xml
         reduc = 0
-        print simulation.P.ir.bareme #change le barème de l'impot sur le revenu
-        print simulation.P.ir.bareme.nb #nb de tranche du brarème de l'impot
+        #print simulation.P.ir.bareme #change le barème de l'impot sur le revenu
+        #print simulation.P.ir.bareme.nb #nb de tranche du brarème de l'impot
         for i in range(2, simulation.P.ir.bareme.nb):
             simulation.P.ir.bareme.setSeuil(i, simulation.P.ir.bareme.seuils[i] * (1 - reduc)) #a partir de la 2nd tranche réduit les seuils des barèmes
 
-        print simulation.P.ir.bareme #nouvea barème
-        print simulation.P.ir.bareme.nb
+        #print simulation.P.ir.bareme #nouvea barème
+        #print simulation.P.ir.bareme.nb
 
         if simulation.reforme is True:
-            df = simulation.get_results_dataframe(difference = True) # prends la différence(argument de la fonction getresultdataframe
-        
-        
-        
-            ts = df
-
-            ts = ts.cumsum()
-
-            ts.plot()
-        
-        
-        
-        
-        
+            df = simulation.get_results_dataframe(default = True , difference = False) # prends la différence(argument de la fonction getresultdataframe
+            return df
         else:
             df = simulation.get_results_dataframe()
-        print df.to_string()
-
-        # Save example to excel
-        if save:
-            destination_dir = "c:/users/utilisateur/documents/"
-            if reforme:
-                fname = destination_dir + "Trannoy_reforme_new_diff.%s" % "xlsx"
-                print "Saving " + fname
-                df.to_excel(fname, sheet_name = "difference")
-            else:
-                fname = destination_dir + "Trannoy_reforme_new.%s" % "xlsx"
-                print "Saving " + fname
-                df.to_excel(fname, sheet_name = "Trannoy")
-
-                return df
+            
+        #print df.to_string()
+        
+        #print df
+        #return df
 
 
 if __name__ == '__main__':
 #    survey_case(2010)
-    test_case(2013)
+    df1 =  test_case(2013)
+    print df1.to_string()
+    
+   
+    df = df1.transpose()#[['Revenu disponible', 'Salaire imposable' ]]
+    df['Social contribution'] =   df['Salaires imposables'] - df['Revenu disponible']
+   # print df.to_string()
+   # plt.figure()
+   # p = df.plot()
+    
+    #print type(p)
+    
+    #df.plot(legend=False)
+    
+    plt.plot(legend = False)
+    plt.plot( df['Salaires imposables'], df['Salaires imposables'] - df['Revenu disponible'])
+    
+    plt.show()
+    
+    
+    
+    
+    
+    
+    
+       
+    
+    
 
-    #ts = Series(randn(1000), index= sali)
-    ts = df(randn(1000), index=date_range('1/1/2000', periods=1000))
+if __name__== '--comment__':
 
-    ts = ts.cumsum()
+    
+    
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    import pylab, numpy
+    x = numpy.linspace(0,10,1000000)
+    
+    y = x **2
 
-    ts.plot()
+    pylab.plot (df3['Social contribution'],y)
+
+    pylab.show()   
+    
+    
+    
+    
+    
+    import pylab, numpy
+    x = numpy.linspace(0,10,1000000)
+    
+    y = x **2
+
+    pylab.plot (df[revdisp], df[sal])
+
+    pylab.show()      
+    
+    ################################
+##### Commentaires sur la fonction #######    
+    ################################
+# Pour l'instant il semble n'y avoir aucunne différence entre le fait de mettre difference = True ou False à 
+# la ligne 78 on aboutit systématiquement à un revenu disponible de 282 euros pour le 4 eme ménage.
+# Il est possible qu'une différence ne soit pas réellement faite, et que le programe mette 0 de revenu disp aux ménages les plus
+# pauvres car on leurs à enlevé l'allocation logement ?  

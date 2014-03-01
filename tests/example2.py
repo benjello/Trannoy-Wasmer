@@ -54,5 +54,12 @@ def case_study2(year=2013):
 if __name__== '__main__' :
     case_study2()
     
+    import pylab, numpy
+    x = numpy.linspace(-10,10,100)
     
+    y = x **2
+
+    pylab.plot (x,y)
+
+    pylab.show()      
 
