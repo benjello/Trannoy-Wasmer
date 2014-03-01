@@ -96,7 +96,7 @@ if __name__ == '__main__':
     print df1.to_string()
     
    
-    df = df1.transpose()#[['Revenu disponible', 'Salaire imposable' ]]
+    df = df1.transpose()[['Revenu disponible', 'Salaire imposable' ]]
     df['Social contribution'] =   df['Salaires imposables'] - df['Revenu disponible']
    # print df.to_string()
    # plt.figure()
